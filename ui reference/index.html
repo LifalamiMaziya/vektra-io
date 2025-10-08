@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vektraio - AI App Builder</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Poppins", sans-serif;
+        overflow-x: hidden; /* Prevent horizontal scrolling globally */
+      }
+      .animate-fadeInDown {
+        animation: fadeInDown 1s ease-out forwards;
+      }
+      .animate-fadeInUp {
+        animation: fadeInUp 1s ease-out forwards;
+        opacity: 0;
+      }
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/genai": "https://aistudiocdn.com/@google/genai@^1.16.0",
+          "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+          "react/": "https://aistudiocdn.com/react@^19.1.1/",
+          "react": "https://aistudiocdn.com/react@^19.1.1"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="/index.css" />
+  </head>
+  <body class="antialiased">
+    <div id="root"></div>
+    <script>
+      class InteractiveAbstractBackground extends HTMLElement {
+        constructor() {
+          super();
+          this.attachShadow({ mode: "open" });
+          this.mouseX = 0;
+          this.mouseY = 0;
+          this.particles = [];
+          this.breathePhase = 0;
+        }
+
+        connectedCallback() {
+          this.render();
+          this.setupEventListeners();
+          this.startAnimations();
+        }
+
+        render() {
+          this.shadowRoot.innerHTML = `
+                    <style>
+                        :host {
+                            display: block;
+                            width: 100%;
+                            height: 100%;
+                            position: relative;
+                            overflow: hidden;
+                        }
+
+                        .container {
+                            position: relative;
+                            width: 100%;
+                            height: 100%;
+                            background: linear-gradient(135deg, #f5f0e8 0%, #ede5d8 100%);
+                            cursor: none;
+                        }
+
+                        .shape {
+                            position: absolute;
+                            border-radius: 50%;
+                            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+                            will-change: transform;
+                        }
+
+                        .orange-circle {
+                            width: 300px;
+                            height: 300px;
+                            background: radial-gradient(circle at 30% 30%, #ff8c42, #e07528);
+                            top: -50px;
+                            right: -50px;
+                            border-radius: 50%;
+                            box-shadow: 0 20px 60px rgba(224, 117, 40, 0.3);
+                        }
+
+                        .pink-blob {
+                            width: 280px;
+                            height: 350px;
+                            background: radial-gradient(ellipse at 40% 60%, #d4756b, #b85c52);
+                            bottom: 20px;
+                            left: -80px;
+                            border-radius: 60% 40% 70% 30%;
+                            box-shadow: 0 25px 50px rgba(180, 92, 82, 0.25);
+                        }
+
+                        .teal-shape {
+                            width: 200px;
+                            height: 240px;
+                            background: radial-gradient(ellipse at 70% 40%, #6b9a8a, #527a6b);
+                            bottom: -20px;
+                            right: 50px;
+                            border-radius: 40% 60% 30% 70%;
+                            box-shadow: 0 20px 40px rgba(82, 122, 107, 0.25);
+                        }
+
+                        .floating-particles {
+                            position: absolute;
+                            width: 4px;
+                            height: 4px;
+                            background: rgba(255, 255, 255, 0.6);
+                            border-radius: 50%;
+                            pointer-events: none;
+                        }
+
+                        .cursor {
+                            position: fixed;
+                            width: 20px;
+                            height: 20px;
+                            background: rgba(255, 255, 255, 0.8);
+                            border-radius: 50%;
+                            pointer-events: none;
+                            z-index: 1000;
+                            transition: transform 0.1s ease;
+                            backdrop-filter: blur(10px);
+                            border: 1px solid rgba(255, 255, 255, 0.3);
+                        }
+
+                        /* Animation classes */
+                        .animate-float {
+                            animation: float 6s ease-in-out infinite;
+                        }
+
+                        .animate-pulse {
+                            animation: pulse 4s ease-in-out infinite;
+                        }
+
+                        .animate-morph {
+                            animation: morph 8s ease-in-out infinite;
+                        }
+
+                        @keyframes float {
+                            0%, 100% { transform: translateY(0px) rotate(0deg); }
+                            50% { transform: translateY(-20px) rotate(2deg); }
+                        }
+
+                        @keyframes pulse {
+                            0%, 100% { transform: scale(1); }
+                            50% { transform: scale(1.05); }
+                        }
+
+                        @keyframes morph {
+                            0%, 100% { border-radius: 60% 40% 70% 30%; }
+                            25% { border-radius: 30% 70% 40% 60%; }
+                            50% { border-radius: 70% 30% 60% 40%; }
+                            75% { border-radius: 40% 60% 30% 70%; }
+                        }
+
+                        @keyframes particleFloat {
+                            0% { 
+                                transform: translateY(100vh) translateX(0px);
+                                opacity: 0;
+                            }
+                            10% { opacity: 1; }
+                            90% { opacity: 1; }
+                            100% { 
+                                transform: translateY(-100px) translateX(50px);
+                                opacity: 0;
+                            }
+                        }
+
+                        @keyframes rippleExpand {
+                            0% {
+                                transform: scale(0);
+                                opacity: 1;
+                            }
+                            100% {
+                                transform: scale(4);
+                                opacity: 0;
+                            }
+                        }
+                    </style>
+                    
+                    <div class="container">
+                        <!-- Main shapes -->
+                        <div class="shape orange-circle animate-pulse" id="orangeShape"></div>
+                        <div class="shape pink-blob animate-morph" id="pinkShape"></div>
+                        <div class="shape teal-shape animate-float" id="tealShape"></div>
+                        
+                        <!-- Custom cursor -->
+                        <div class="cursor" id="cursor"></div>
+                    </div>
+                `;
+        }
+
+        setupEventListeners() {
+          const container = this.shadowRoot.querySelector(".container");
+          const cursor = this.shadowRoot.getElementById("cursor");
+          const orangeShape = this.shadowRoot.getElementById("orangeShape");
+          const pinkShape = this.shadowRoot.getElementById("pinkShape");
+          const tealShape = this.shadowRoot.getElementById("tealShape");
+
+          // Mouse movement handler
+          const handleMouseMove = (e) => {
+            const rect = this.getBoundingClientRect();
+            this.mouseX = e.clientX - rect.left;
+            this.mouseY = e.clientY - rect.top;
+
+            cursor.style.left = this.mouseX - 10 + "px";
+            cursor.style.top = this.mouseY - 10 + "px";
+
+            // Interactive shape responses
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            const distanceFromCenter = Math.sqrt(
+              Math.pow(this.mouseX - centerX, 2) +
+                Math.pow(this.mouseY - centerY, 2)
+            );
+
+            const maxDistance = Math.sqrt(
+              centerX * centerX + centerY * centerY
+            );
+            const intensity = 1 - distanceFromCenter / maxDistance;
+
+            // Orange circle response
+            const orangeOffset = intensity * 30;
+            orangeShape.style.transform = `translate(${orangeOffset}px, ${orangeOffset}px) scale(${1 + intensity * 0.1})`;
+
+            // Pink blob response
+            const pinkOffsetX = (this.mouseX / rect.width - 0.5) * 20;
+            const pinkOffsetY = (this.mouseY / rect.height - 0.5) * 20;
+            pinkShape.style.transform = `translate(${pinkOffsetX}px, ${pinkOffsetY}px) scale(${1 + intensity * 0.08})`;
+
+            // Teal shape response
+            const tealOffsetX = (this.mouseX / rect.width - 0.5) * -15;
+            const tealOffsetY = (this.mouseY / rect.height - 0.5) * -15;
+            tealShape.style.transform = `translate(${tealOffsetX}px, ${tealOffsetY}px) scale(${1 + intensity * 0.12})`;
+          };
+
+          // Shape hover effects
+          [orangeShape, pinkShape, tealShape].forEach((shape) => {
+            shape.addEventListener("mouseenter", () => {
+              shape.style.filter = "brightness(1.2) saturate(1.3)";
+              shape.style.transform += " scale(1.1)";
+              cursor.style.transform = "scale(2)";
+            });
+
+            shape.addEventListener("mouseleave", () => {
+              shape.style.filter = "brightness(1) saturate(1)";
+              cursor.style.transform = "scale(1)";
+            });
+          });
+
+          // Click effect
+          container.addEventListener("click", (e) => {
+            const rect = this.getBoundingClientRect();
+            const ripple = document.createElement("div");
+            ripple.style.position = "absolute";
+            ripple.style.left = e.clientX - rect.left - 25 + "px";
+            ripple.style.top = e.clientY - rect.top - 25 + "px";
+            ripple.style.width = "50px";
+            ripple.style.height = "50px";
+            ripple.style.borderRadius = "50%";
+            ripple.style.background =
+              "radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 70%)";
+            ripple.style.pointerEvents = "none";
+            ripple.style.animation = "rippleExpand 1s ease-out forwards";
+
+            container.appendChild(ripple);
+
+            setTimeout(() => {
+              if (ripple.parentNode) {
+                ripple.parentNode.removeChild(ripple);
+              }
+            }, 1000);
+          });
+
+          // Add event listeners
+          this.addEventListener("mousemove", handleMouseMove);
+        }
+
+        createParticle() {
+          const container = this.shadowRoot.querySelector(".container");
+          const particle = document.createElement("div");
+          particle.className = "floating-particles";
+          particle.style.left = Math.random() * this.offsetWidth + "px";
+          particle.style.animation = `particleFloat ${Math.random() * 10 + 10}s linear`;
+          container.appendChild(particle);
+
+          setTimeout(() => {
+            if (particle.parentNode) {
+              particle.parentNode.removeChild(particle);
+            }
+          }, 20000);
+        }
+
+        startAnimations() {
+          // Create particles periodically
+          setInterval(() => this.createParticle(), 3000);
+
+          // Subtle background color breathing
+          setInterval(() => {
+            this.breathePhase += 0.02;
+            const intensity = (Math.sin(this.breathePhase) + 1) / 2;
+            const lightness = 92 + intensity * 3;
+            const container = this.shadowRoot.querySelector(".container");
+            container.style.background = `linear-gradient(135deg, hsl(35, 20%, ${lightness}%) 0%, hsl(30, 15%, ${lightness - 2}%) 100%)`;
+          }, 50);
+        }
+      }
+
+      // Register the custom element
+      customElements.define(
+        "interactive-abstract-bg",
+        InteractiveAbstractBackground
+      );
+    </script>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
