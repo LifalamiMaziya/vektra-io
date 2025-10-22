@@ -214,7 +214,7 @@ const WorkspacePage = ({
   };
 
   return (
-    <div className="bg-[#121212] text-[#E0E0E0] h-screen w-screen grid grid-cols-1 lg:grid-cols-[400px_1fr] antialiased overflow-hidden">
+    <div className="bg-[#121212] text-[#E0E0E0] h-screen w-screen grid grid-cols-1 md:grid-cols-[350px_1fr] lg:grid-cols-[400px_1fr] antialiased overflow-hidden">
       {/* Left Column: AI Chat Interface */}
       <div className="bg-[#1F1F1F] flex flex-col border-r border-gray-800 h-full">
         <header className="flex-shrink-0 flex justify-between items-center p-4 border-b border-gray-800">

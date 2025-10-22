@@ -19,9 +19,9 @@ const DashboardPage = ({
   onStartNewProject,
 }: DashboardPageProps) => {
   return (
-    <div className="bg-[#121212] text-white relative min-h-screen flex flex-col px-6 md:px-12">
+    <div className="bg-[#121212] text-white relative min-h-screen flex flex-col px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <header className="py-6 flex justify-between items-center sticky top-0 backdrop-blur-sm z-50 -mx-6 md:-mx-12 px-6 md:px-12">
+      <header className="py-6 flex justify-between items-center sticky top-0 backdrop-blur-sm z-50 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <Code
             size={32}
@@ -41,7 +41,7 @@ const DashboardPage = ({
                   alt="Avatar"
                   className="w-8 h-8 rounded-full"
                 />
-                <span className="text-gray-400 font-medium">
+                <span className="text-gray-400 font-medium hidden sm:block">
                   {user.name || user.email}
                 </span>
               </div>
@@ -56,9 +56,9 @@ const DashboardPage = ({
         </div>
       </header>
 
-      <main className="flex-grow py-24">
+      <main className="flex-grow py-12 sm:py-24">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-100">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-100">
             My Workspace
           </h1>
           <p className="mt-4 text-lg text-gray-400">
@@ -66,7 +66,7 @@ const DashboardPage = ({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-12 max-w-7xl mx-auto">
           {/* New Project Card */}
           <button
             onClick={onStartNewProject}

@@ -59,9 +59,9 @@ const LandingPage = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#121212] text-white relative flex flex-col px-6 md:px-12">
+    <div className="min-h-screen bg-[#121212] text-white relative flex flex-col px-4 sm:px-6 lg:px-8">
       {/* Header */}
-      <header className="py-6 flex justify-between items-center sticky top-0 backdrop-blur-sm z-50 -mx-6 md:-mx-12 px-6 md:px-12">
+      <header className="py-6 flex justify-between items-center sticky top-0 backdrop-blur-sm z-50 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-3">
           <Code size={32} className="text-gray-400" />
           <span className="text-2xl font-bold text-gray-200">Vektra</span>
@@ -71,7 +71,7 @@ const LandingPage = ({
             <>
               <button
                 onClick={() => onNavigate(View.Dashboard)}
-                className="text-gray-400 hover:text-white font-medium transition-colors"
+                className="text-gray-400 hover:text-white font-medium transition-colors hidden sm:block"
               >
                 Dashboard
               </button>
@@ -98,20 +98,20 @@ const LandingPage = ({
       </header>
 
       {/* Hero Section */}
-      <main className="flex-grow flex items-center justify-center py-24">
+      <main className="flex-grow flex items-center justify-center py-12 sm:py-24">
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-gray-800/50 text-gray-300 px-4 py-2 rounded-full mb-8 text-sm font-medium">
             <Sparkle size={16} weight="fill" />
             AI-Powered Web App Builder
           </div>
 
-          <h1 className="text-6xl md:text-7xl font-bold text-gray-100 mb-6 leading-tight">
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold text-gray-100 mb-6 leading-tight">
             Build Web Apps with
             <br />
             <span className="text-gray-400">AI Magic</span>
           </h1>
 
-          <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
             Describe your idea and watch as AI creates a fully functional web
             application with live preview. No coding required.
           </p>

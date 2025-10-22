@@ -23,6 +23,8 @@
     <!-- Favicon support -->
     <link rel="icon" href="/favicon.ico" />
 
+    <link rel="manifest" href="/manifest.json" />
+
     <!-- Preload fonts if any -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -43,5 +45,16 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="app"></div>
     <script type="module" src="/src/client.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then(registration => {
+            console.log('SW registered: ', registration);
+          }).catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+          });
+        });
+      }
+    </script>
   </body>
 </html>
