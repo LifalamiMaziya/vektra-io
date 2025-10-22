@@ -53,6 +53,7 @@ export interface Project {
   chatHistory: ChatMessage[];
   currentVersionIndex: number;
   sandboxId?: string;
+  sandboxUrl?: string;
 }
 
 export interface AppState {
