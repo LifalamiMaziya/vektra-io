@@ -17,7 +17,6 @@ import {
 import { createWorkersAI } from "workers-ai-provider";
 import { processToolCalls, cleanupMessages } from "./utils";
 import { tools, executions } from "./tools";
-import { webAppTools } from "./sandbox-tools";
 
 /**
  * Chat Agent implementation that handles real-time AI chat interactions

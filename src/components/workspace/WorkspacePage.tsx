@@ -163,6 +163,7 @@ const WorkspacePage = ({
               versions: [...project.versions, newVersion],
               currentVersionIndex: project.versions.length,
               sandboxId: result.sandboxId || project.sandboxId,
+              sandboxUrl: result.sandboxUrl || project.sandboxUrl,
             };
 
             onUpdateProject(updatedProject);
