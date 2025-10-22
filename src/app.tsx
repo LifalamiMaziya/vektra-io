@@ -99,7 +99,8 @@ const App = () => {
               ...files.map((f) => ({
                 inlineData: { mimeType: f.mimeType, data: f.data }
               }))
-            ]
+            ],
+            sandboxId: `sbx_${Date.now()}`
           }
         ],
         currentVersionIndex: -1
@@ -213,6 +214,7 @@ const App = () => {
             user={user}
             onNavigate={handleNavigate}
             onLogout={handleLogout}
+            sandboxUrl={activeProject.sandboxUrl}
           />
         );
 

@@ -17,7 +17,7 @@ import {
   Code,
   FileHtml,
   FileCss,
-  FileJs
+  FileJs,
 } from "@phosphor-icons/react";
 import { MemoizedMarkdown } from "../memoized-markdown";
 import { ToolInvocationCard } from "../tool-invocation-card/ToolInvocationCard";
@@ -29,23 +29,24 @@ interface WorkspacePageProps {
   user: User;
   onNavigate: (view: View) => void;
   onLogout: () => void;
+  sandboxUrl?: string;
 }
 
 const toolsRequiringConfirmation: (keyof typeof tools)[] = [
-  "getWeatherInformation"
+  "getWeatherInformation",
 ];
 
 const Loader = ({
   message,
-  subMessage
+  subMessage,
 }: {
   message: string;
   subMessage: string;
 }) => (
-  <div className="absolute inset-0 flex items-center justify-center bg-[#2a2a2a] bg-opacity-90 z-10">
+  <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-80 z-10">
     <div className="text-center">
       <svg
-        className="animate-spin h-12 w-12 text-[#C87550] mx-auto mb-4"
+        className="animate-spin h-12 w-12 text-gray-400 mx-auto mb-4"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -65,7 +66,7 @@ const Loader = ({
         />
       </svg>
       <p className="text-white text-lg font-semibold">{message}</p>
-      <p className="text-[#888] text-sm mt-2">{subMessage}</p>
+      <p className="text-gray-400 text-sm mt-2">{subMessage}</p>
     </div>
   </div>
 );
@@ -76,7 +77,8 @@ const WorkspacePage = ({
   onDeleteProject,
   user,
   onNavigate,
-  onLogout
+  onLogout,
+  sandboxUrl,
 }: WorkspacePageProps) => {
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">(
     "desktop"
@@ -87,7 +89,7 @@ const WorkspacePage = ({
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const agent = useAgent({
-    agent: "chat"
+    agent: "chat",
   });
 
   const [agentInput, setAgentInput] = useState("");
@@ -103,7 +105,7 @@ const WorkspacePage = ({
     await sendMessage(
       {
         role: "user",
-        parts: [{ type: "text", text: message }]
+        parts: [{ type: "text", text: message }],
       },
       {}
     );
@@ -114,9 +116,9 @@ const WorkspacePage = ({
     addToolResult,
     status,
     sendMessage,
-    stop
+    stop,
   } = useAgentChat<unknown, UIMessage<{ createdAt: string }>>({
-    agent
+    agent,
   });
 
   // Parse tool results to extract project data
@@ -141,10 +143,10 @@ const WorkspacePage = ({
                 language: path.endsWith(".html")
                   ? "html"
                   : path.endsWith(".css")
-                    ? "css"
-                    : path.endsWith(".js")
-                      ? "javascript"
-                      : undefined
+                  ? "css"
+                  : path.endsWith(".js")
+                  ? "javascript"
+                  : undefined,
               })
             );
 
@@ -152,7 +154,7 @@ const WorkspacePage = ({
               id: `v${Date.now()}`,
               timestamp: Date.now(),
               files,
-              previewUrl: result.previewUrl
+              previewUrl: result.previewUrl,
             };
 
             // Update project with new version
@@ -160,7 +162,7 @@ const WorkspacePage = ({
               ...project,
               versions: [...project.versions, newVersion],
               currentVersionIndex: project.versions.length,
-              sandboxId: result.sandboxId || project.sandboxId
+              sandboxId: result.sandboxId || project.sandboxId,
             };
 
             onUpdateProject(updatedProject);
@@ -214,24 +216,24 @@ const WorkspacePage = ({
   return (
     <div className="bg-[#121212] text-[#E0E0E0] h-screen w-screen grid grid-cols-1 lg:grid-cols-[400px_1fr] antialiased overflow-hidden">
       {/* Left Column: AI Chat Interface */}
-      <div className="bg-[#1F1F1F] flex flex-col border-r border-[#333] h-full">
-        <header className="flex-shrink-0 flex justify-between items-center p-4 border-b border-[#333]">
+      <div className="bg-[#1F1F1F] flex flex-col border-r border-gray-800 h-full">
+        <header className="flex-shrink-0 flex justify-between items-center p-4 border-b border-gray-800">
           <div className="flex items-center gap-3">
             <button
               onClick={() => onNavigate(View.Dashboard)}
               title="Back to Dashboard"
-              className="text-[#aaa] hover:text-white transition-colors"
+              className="text-gray-400 hover:text-white transition-colors"
               aria-label="Back to Dashboard"
             >
               <ArrowLeft size={20} />
             </button>
-            <div className="h-6 w-px bg-[#333]" />
-            <span className="text-[#aaa] text-sm font-medium truncate">
+            <div className="h-6 w-px bg-gray-800" />
+            <span className="text-gray-400 text-sm font-medium truncate">
               {project.name}
             </span>
           </div>
           <button
-            className="text-[#888] hover:text-white transition-colors"
+            className="text-gray-400 hover:text-white transition-colors"
             aria-label="Settings"
           >
             <Gear size={20} />
@@ -244,8 +246,8 @@ const WorkspacePage = ({
         >
           {agentMessages.length === 0 && (
             <div className="text-center py-12">
-              <div className="bg-[#2a2a2a] rounded-xl p-6 border border-[#3c3c3c]">
-                <p className="text-[#888]">
+              <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+                <p className="text-gray-400">
                   Describe what you want to build or modify...
                 </p>
               </div>
@@ -258,7 +260,9 @@ const WorkspacePage = ({
             return (
               <div key={m.id}>
                 <div
-                  className={`p-5 rounded-xl border border-[#3c3c3c] ${isUser ? "bg-[#333]" : "bg-[#2a2a2a]"}`}
+                  className={`p-5 rounded-xl border border-gray-700 ${
+                    isUser ? "bg-gray-800" : "bg-gray-900"
+                  }`}
                 >
                   <div className="flex justify-between items-start gap-4">
                     <div className="flex-grow min-w-0">
@@ -296,14 +300,14 @@ const WorkspacePage = ({
                                 addToolResult({
                                   tool: part.type.replace("tool-", ""),
                                   toolCallId,
-                                  output: result
+                                  output: result,
                                 });
                               }}
                               addToolResult={(toolCallId, result) => {
                                 addToolResult({
                                   tool: part.type.replace("tool-", ""),
                                   toolCallId,
-                                  output: result
+                                  output: result,
                                 });
                               }}
                             />
@@ -320,8 +324,8 @@ const WorkspacePage = ({
           <div ref={messagesEndRef} />
         </div>
 
-        <footer className="flex-shrink-0 bg-[#1F1F1F] border-t border-[#333] p-4">
-          <div className="relative bg-[#1F1F1F] rounded-lg border border-[#333]">
+        <footer className="flex-shrink-0 bg-[#1F1F1F] border-t border-gray-800 p-4">
+          <div className="relative bg-[#1F1F1F] rounded-lg border border-gray-700">
             <div className="relative flex items-center">
               <input
                 type="text"
@@ -335,14 +339,14 @@ const WorkspacePage = ({
                 }}
                 placeholder="Ask to modify your app..."
                 disabled={pendingToolCallConfirmation}
-                className="w-full bg-transparent text-white placeholder-[#888] py-3 pl-4 pr-16 rounded-lg focus:outline-none disabled:opacity-50"
+                className="w-full bg-transparent text-white placeholder-gray-400 py-3 pl-4 pr-16 rounded-lg focus:outline-none disabled:opacity-50"
               />
               <div className="absolute right-2 top-1/2 -translate-y-1/2">
                 {isLoading ? (
                   <button
                     type="button"
                     onClick={stop}
-                    className="bg-[#C87550] w-9 h-9 flex items-center justify-center text-white rounded-lg hover:bg-opacity-90 transition-opacity"
+                    className="bg-gray-700 w-9 h-9 flex items-center justify-center text-white rounded-lg hover:bg-opacity-90 transition-opacity"
                   >
                     <Stop size={16} />
                   </button>
@@ -352,7 +356,7 @@ const WorkspacePage = ({
                       handleAgentSubmit(e as unknown as React.FormEvent)
                     }
                     disabled={!agentInput.trim()}
-                    className="bg-[#C87550] w-9 h-9 flex items-center justify-center text-white rounded-lg hover:bg-opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-gray-700 w-9 h-9 flex items-center justify-center text-white rounded-lg hover:bg-opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <PaperPlaneTilt size={16} />
                   </button>
@@ -365,13 +369,13 @@ const WorkspacePage = ({
 
       {/* Right Column: Preview and Files */}
       <div className="bg-[#212121] flex flex-col h-full">
-        <header className="flex-shrink-0 flex justify-between items-center p-4 border-b border-[#333]">
+        <header className="flex-shrink-0 flex justify-between items-center p-4 border-b border-gray-800">
           <div className="flex items-center gap-4">
             <h1 className="text-lg font-semibold text-white">Live Preview</h1>
             {currentVersion && (
               <button
                 onClick={() => setShowFiles(!showFiles)}
-                className="text-sm text-[#aaa] hover:text-white transition-colors"
+                className="text-sm text-gray-400 hover:text-white transition-colors"
               >
                 {showFiles ? "Hide Files" : "Show Files"}
               </button>
@@ -379,13 +383,13 @@ const WorkspacePage = ({
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="bg-[#2a2a2a] p-1 rounded-lg flex items-center space-x-1 text-sm">
+            <div className="bg-gray-800/50 p-1 rounded-lg flex items-center space-x-1 text-sm">
               <button
                 onClick={() => setViewport("desktop")}
                 className={`w-10 h-8 flex items-center justify-center rounded-md transition-colors ${
                   viewport === "desktop"
-                    ? "bg-[#C87550] text-white"
-                    : "text-[#aaa] hover:text-white"
+                    ? "bg-gray-700 text-white"
+                    : "text-gray-400 hover:text-white"
                 }`}
                 aria-label="Desktop view"
                 title="Desktop view"
@@ -396,8 +400,8 @@ const WorkspacePage = ({
                 onClick={() => setViewport("tablet")}
                 className={`w-10 h-8 flex items-center justify-center rounded-md transition-colors ${
                   viewport === "tablet"
-                    ? "bg-[#C87550] text-white"
-                    : "text-[#aaa] hover:text-white"
+                    ? "bg-gray-700 text-white"
+                    : "text-gray-400 hover:text-white"
                 }`}
                 aria-label="Tablet view"
                 title="Tablet view"
@@ -408,8 +412,8 @@ const WorkspacePage = ({
                 onClick={() => setViewport("mobile")}
                 className={`w-10 h-8 flex items-center justify-center rounded-md transition-colors ${
                   viewport === "mobile"
-                    ? "bg-[#C87550] text-white"
-                    : "text-[#aaa] hover:text-white"
+                    ? "bg-gray-700 text-white"
+                    : "text-gray-400 hover:text-white"
                 }`}
                 aria-label="Mobile view"
                 title="Mobile view"
@@ -418,9 +422,11 @@ const WorkspacePage = ({
               </button>
             </div>
 
-            <div className="flex items-center space-x-2 text-sm text-[#888]">
+            <div className="flex items-center space-x-2 text-sm text-gray-400">
               <div
-                className={`w-2 h-2 rounded-full ${isLoading ? "bg-yellow-400" : "bg-green-400"}`}
+                className={`w-2 h-2 rounded-full ${
+                  isLoading ? "bg-yellow-400" : "bg-green-400"
+                }`}
               />
               <span>{isLoading ? "Building..." : "Ready"}</span>
             </div>
@@ -430,8 +436,8 @@ const WorkspacePage = ({
         <div className="flex-grow flex overflow-hidden">
           {/* File List */}
           {showFiles && currentFiles.length > 0 && (
-            <div className="w-64 border-r border-[#333] bg-[#1a1a1a] overflow-y-auto">
-              <div className="p-3 border-b border-[#333]">
+            <div className="w-64 border-r border-gray-800 bg-gray-900/50 overflow-y-auto">
+              <div className="p-3 border-b border-gray-800">
                 <h3 className="text-sm font-semibold text-white">Files</h3>
               </div>
               <div className="p-2">
@@ -441,8 +447,8 @@ const WorkspacePage = ({
                     onClick={() => setSelectedFile(file.path)}
                     className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
                       selectedFile === file.path
-                        ? "bg-[#C87550] text-white"
-                        : "text-[#aaa] hover:bg-[#2a2a2a] hover:text-white"
+                        ? "bg-gray-700 text-white"
+                        : "text-gray-400 hover:bg-gray-800 hover:text-white"
                     }`}
                   >
                     {getFileIcon(file.path)}
@@ -465,8 +471,8 @@ const WorkspacePage = ({
 
               {selectedFile ? (
                 // Show code editor
-                <div className="w-full h-full bg-[#1e1e1e] rounded-lg overflow-hidden">
-                  <pre className="p-4 text-sm text-[#d4d4d4] overflow-auto h-full">
+                <div className="w-full h-full bg-gray-900 rounded-lg overflow-hidden">
+                  <pre className="p-4 text-sm text-gray-300 overflow-auto h-full">
                     <code>
                       {currentFiles.find((f) => f.path === selectedFile)
                         ?.content || ""}
@@ -480,20 +486,21 @@ const WorkspacePage = ({
                     viewport === "desktop"
                       ? "w-full"
                       : viewport === "tablet"
-                        ? "w-[768px] max-w-full"
-                        : "w-[375px] max-w-full"
+                      ? "w-[768px] max-w-full"
+                      : "w-[375px] max-w-full"
                   }`}
                 >
                   <iframe
                     title="Live Preview"
-                    srcDoc={htmlFile.content}
+                    src={sandboxUrl}
+                    srcDoc={htmlFile?.content}
                     className="w-full h-full rounded-md"
                     sandbox="allow-scripts allow-same-origin"
                   />
                 </div>
               ) : (
                 // Empty state
-                <div className="text-center text-[#888]">
+                <div className="text-center text-gray-400">
                   <p className="text-lg">No preview available</p>
                   <p className="text-sm mt-2">
                     Start chatting with the AI to build your app
