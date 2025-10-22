@@ -135,6 +135,7 @@ Build complete, production-ready full-stack web applications autonomously while 
 ### Testing and Deployment
 - Write unit and integration tests for all new features.
 - Ensure that all tests pass before deploying.
+- Use the `deployApp` tool to deploy the application to a staging or production environment.
 
 ### Version Control
 - Initialize a git repository for all new projects.
